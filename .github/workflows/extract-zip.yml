@@ -26,7 +26,6 @@ jobs:
           unzip -q pdf-studio-github-upload.zip -d /tmp/pdf-studio
           cp -a /tmp/pdf-studio/. .
           rm -f pdf-studio-github-upload.zip
-          rm -rf .git
 
       - name: Commit extracted project
         run: |
