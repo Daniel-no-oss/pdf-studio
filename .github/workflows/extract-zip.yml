@@ -1,0 +1,39 @@
+name: Extract PDF Studio ZIP
+
+on:
+  push:
+    paths:
+      - "pdf-studio-github-upload.zip"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract project files
+        run: |
+          if [ ! -f pdf-studio-github-upload.zip ]; then
+            echo "Upload pdf-studio-github-upload.zip to the repository root first."
+            exit 1
+          fi
+          mkdir -p /tmp/pdf-studio
+          unzip -q pdf-studio-github-upload.zip -d /tmp/pdf-studio
+          cp -a /tmp/pdf-studio/. .
+          rm -f pdf-studio-github-upload.zip
+          rm -rf .git
+
+      - name: Commit extracted project
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "Import PDF Studio project from ZIP"
+            git push
+          fi
